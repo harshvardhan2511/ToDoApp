@@ -33,6 +33,9 @@ import java.util.Locale
 import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.example.to_dolist.ui.theme.Purple40
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,9 +54,9 @@ fun TodoListPage(viewModel: TodoViewModel){
 
         topBar = {
             TopAppBar(
-                title = { Text("My Top Bar") },
+                title = { Text("To-Do List", color = Color.White) },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = Purple40
                 )
             )
         },
@@ -74,21 +77,25 @@ fun TodoListPage(viewModel: TodoViewModel){
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         OutlinedTextField(
-                            modifier= Modifier.weight(1f),
+                            modifier= Modifier.weight(2f),
                             value = inputText,
                             onValueChange = {
                                 inputText = it
-                            })
-                        Button(onClick = {
+                            },
+                            shape = RoundedCornerShape(20.dp),
+                            )
+                        Button(modifier = Modifier.padding(8.dp),
+                            onClick = {
                             if(inputText.isNotEmpty()){
                                 viewModel.addTodo(inputText)
                                 inputText = ""
                             }else{
                                 Toast.makeText(context, "Please enter some text", Toast.LENGTH_SHORT).show()
                             }
+                        }
 
-                        }) {
-                            Text(text = "Add")
+                        ) {
+                            Text(text = "Add", color = Color.White)
                         }
                     }
 
@@ -125,7 +132,8 @@ fun TodoListPage(viewModel: TodoViewModel){
 fun TodoItem(item : toDoList, viewModel: TodoViewModel ,onDelete : ()-> Unit) {
 
     var showDialog by remember { mutableStateOf(false) }
-    var textInput by remember { mutableStateOf(TextFieldValue("")) }
+    val text = item.title
+    var textInput by remember { mutableStateOf(TextFieldValue(text)) }
     val context = LocalContext.current
 
     Row(
@@ -142,7 +150,12 @@ fun TodoItem(item : toDoList, viewModel: TodoViewModel ,onDelete : ()-> Unit) {
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = SimpleDateFormat("HH:mm:aa, dd/mm", Locale.ENGLISH).format(item.date),
+                text = SimpleDateFormat("EEE, MMM d", Locale.ENGLISH).format(item.date),
+                fontSize = 12.sp,
+                color = Color.LightGray
+            )
+            Text(
+                text = SimpleDateFormat("HH:mm:aa", Locale.ENGLISH).format(item.date),
                 fontSize = 12.sp,
                 color = Color.LightGray
             )
@@ -173,13 +186,14 @@ fun TodoItem(item : toDoList, viewModel: TodoViewModel ,onDelete : ()-> Unit) {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Enter Your Input") },
+            title = { Text(text = "Edit Task") },
             text = {
                 // Text input field inside the dialog
                 OutlinedTextField(
                     value = textInput,
                     onValueChange = { newValue -> textInput = newValue },
-                    label = { Text("Your input") },
+                    placeholder = { Text("Enter Text") },
+                    label = { Text("Enter Text") },
                     modifier = Modifier.fillMaxWidth() // Make the text field fill the dialog width
                 )
             },
