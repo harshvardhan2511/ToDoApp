@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.to_dolist.drag.DragDropList
 import com.example.to_dolist.drag.move
 import com.example.to_dolist.entity.toDoList
@@ -26,7 +27,8 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
+        installSplashScreen()
         setContent {
             ToDoListTheme {
                 TodoListPage(TodoViewModel())
