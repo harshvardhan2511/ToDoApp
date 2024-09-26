@@ -6,24 +6,31 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.to_dolist.entity.toDoList
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 @Dao
 interface ToDoDAO {
 
     @Query("SELECT * FROM todolist")
-    fun getAllData() : LiveData<List<toDoList>>
+    fun getAllData() : Flow<List<toDoList>>
 
     @Query("SELECT * FROM toDoList WHERE id = :id LIMIT 1")
     suspend fun getDataById(id: Int): toDoList?
 
     @Insert
-    fun insertData(toDoList: toDoList)
+    suspend fun insertData(toDoList: toDoList)
 
     @Query("DELETE FROM todolist WHERE id = :id")
-    fun deleteData(id : Int)
+    suspend fun deleteData(id : Int)
 
     @Update
     suspend fun updateData(todo: toDoList)
+
+    @Query("SELECT * FROM todoList")
+    suspend fun getAllDataSync(): List<toDoList>
+
+    @Query("SELECT MAX(position) FROM todoList")
+    suspend fun getMaxPosition(): Int?
 
 }

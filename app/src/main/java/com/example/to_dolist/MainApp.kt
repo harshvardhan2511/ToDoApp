@@ -15,6 +15,7 @@ class MainApp : Application() {
             applicationContext,
             ToDoDB::class.java,
             ToDoDB.Name
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 }

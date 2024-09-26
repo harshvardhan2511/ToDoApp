@@ -9,5 +9,6 @@ data class toDoList(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var date: Date,
-    var title: String
+    var title: String,
+    var position: Int
 )

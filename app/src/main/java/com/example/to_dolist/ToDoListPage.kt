@@ -31,10 +31,12 @@ import com.example.to_dolist.entity.toDoList
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.example.to_dolist.drag.DragDropList
 import com.example.to_dolist.ui.theme.Purple40
 
 
@@ -43,7 +45,7 @@ import com.example.to_dolist.ui.theme.Purple40
 @Composable
 fun TodoListPage(viewModel: TodoViewModel){
 
-    val todoList by viewModel.todoList.observeAsState()
+    val todoList by viewModel.todoList.collectAsState()
     var inputText by remember {
         mutableStateOf("")
     }
@@ -99,22 +101,20 @@ fun TodoListPage(viewModel: TodoViewModel){
                         }
                     }
 
-                    todoList?.let {
-                        LazyColumn(
-                            content = {
-                                itemsIndexed(it){index: Int, item: toDoList ->
-                                    TodoItem(item = item, viewModel, onDelete = {
-                                        viewModel.deleteTodo(item.id)
-                                    })
-                                }
-                            }
-                        )
-                    }?: Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = "No items yet",
-                        fontSize = 16.sp
-                    )
+                    todoList.let {
+                //                        LazyColumn(
+                //                            content = {
+                //                                itemsIndexed(it){index: Int, item: toDoList ->
+                //                                    TodoItem(item = item, viewModel, onDelete = {
+                //                                        viewModel.deleteTodo(item.id)
+                //                                    })
+                //                                }
+                //                            }
+                //                        )
+
+                        DragDropList(items = it, onMove = {fromIndex, toIndex -> viewModel.moveTodo(fromIndex, toIndex)} , viewModel = viewModel)
+
+                    }
 
 
                 }

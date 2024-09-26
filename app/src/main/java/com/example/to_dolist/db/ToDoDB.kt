@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.to_dolist.entity.toDoList
 
-@Database(entities = [toDoList::class], version = 1)
+@Database(entities = [toDoList::class], version = 2)
 @TypeConverters(typeConverters::class)
 abstract class ToDoDB : RoomDatabase() {
 
