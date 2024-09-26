@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.to_dolist.R
 import com.example.to_dolist.TodoViewModel
 import com.example.to_dolist.entity.toDoList
+import com.example.to_dolist.ui.theme.iconColor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -38,10 +39,9 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DragDropList(
-    items: List<toDoList>, // Changed to List<toDoList> since LazyColumn expects a list
+    items: List<toDoList>,
     onMove: (Int, Int) -> Unit,
     viewModel: TodoViewModel,
-    // onDelete: (Int) -> Unit, // Added item id to onDelete for better handling
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -138,7 +138,7 @@ fun DragDropList(
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_edit_24),
                         contentDescription = "Edit",
-                        tint = Color.White
+                        tint = iconColor
                     )
                 }
 
@@ -146,7 +146,7 @@ fun DragDropList(
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_delete_24),
                         contentDescription = "Delete",
-                        tint = Color.White
+                        tint = iconColor
                     )
                 }
             }

@@ -8,11 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.to_dolist.entity.toDoList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -35,18 +32,24 @@ class TodoViewModel : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun addTodo(title : String){
+    fun addTodo(title: String) {
         // Creating separate thread for DB operation
         viewModelScope.launch(Dispatchers.IO) {
 
             val maxPosition = todoDao.getMaxPosition() ?: -1
 
-            todoDao.insertData(toDoList( title = title, date = Date.from(Instant.now()), position = maxPosition + 1 ) )
+            todoDao.insertData(
+                toDoList(
+                    title = title,
+                    date = Date.from(Instant.now()),
+                    position = maxPosition + 1
+                )
+            )
             _todoList.value = todoDao.getAllDataSync()
         }
     }
 
-    fun deleteTodo(id : Int){
+    fun deleteTodo(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.deleteData(id)
             _todoList.value = todoDao.getAllDataSync()
@@ -72,7 +75,6 @@ class TodoViewModel : ViewModel() {
     }
 
     fun moveTodo(fromIndex: Int, toIndex: Int) {
-        Log.d("ToDoViewModel", "Moving item from index $fromIndex to index $toIndex")
         viewModelScope.launch(Dispatchers.IO) {
             // Fetch the current list of todos
             val todos = todoDao.getAllDataSync()
@@ -104,10 +106,6 @@ class TodoViewModel : ViewModel() {
                 reorderedList[fromIndex] = fromTodo
                 reorderedList[toIndex] = toTodo
 
-
-
-
-
                 // Update the state with the sorted list
                 _todoList.value = reorderedList
 
@@ -116,17 +114,11 @@ class TodoViewModel : ViewModel() {
                 }
             } else {
                 // Log an error if indices are out of range
-                Log.e("TodoViewModel", "Invalid indices: fromIndex = $fromIndex, toIndex = $toIndex")
+                Log.e(
+                    "TodoViewModel",
+                    "Invalid indices: fromIndex = $fromIndex, toIndex = $toIndex"
+                )
             }
         }
     }
 }
-
-
-/*
-
-1
-2
-0
-
-*/
