@@ -1,8 +1,10 @@
 package com.example.to_dolist.drag
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
@@ -33,6 +35,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DragDropList(
@@ -56,31 +59,35 @@ fun DragDropList(
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDrag = { change, offset ->
-                        change.consumeAllChanges()
+                        change.consume()
                         dragDropListState.onDrag(offset = offset)
 
-                        if (overScrollJob?.isActive != true) {
-                            dragDropListState
-                                .checkForScroll()
-                                .takeIf { it != 0f }
-                                ?.let {
-                                    overScrollJob = scope.launch {
-                                        dragDropListState.lazyListState.scrollBy(it)
-                                    }
-                                } ?: kotlin.run { overScrollJob?.cancel() }
-                        }
+
+                        if (overScrollJob?.isActive == true)
+                            return@detectDragGesturesAfterLongPress
+
+                        dragDropListState
+                            .checkForScroll()
+                            .takeIf { it != 0f }
+                            ?.let {
+                                overScrollJob = scope.launch {
+                                    dragDropListState.lazyListState.scrollBy(it)
+                                }
+                            } ?: kotlin.run { overScrollJob?.cancel() }
+
                     },
                     onDragStart = {
                         dragDropListState.onDragStart(it)
-                        overScrollJob?.cancel()
-                        overScrollJob = null
                     },
-                    onDragEnd = { dragDropListState.onDraginterrupted() },
+                    onDragEnd = {
+                        Log.d("DragDropList", "ended")
+                        dragDropListState.onDraginterrupted() },
                     onDragCancel = { dragDropListState.onDraginterrupted() }
                 )
             }
             .fillMaxSize()
-            .padding(all = 10.dp)
+            .padding(all = 10.dp),
+        state = dragDropListState.lazyListState
     ) {
         itemsIndexed(items) { index: Int, item: toDoList ->
             Row(
@@ -97,6 +104,7 @@ fun DragDropList(
                     .padding(8.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.primary)
+                    .animateItemPlacement()
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

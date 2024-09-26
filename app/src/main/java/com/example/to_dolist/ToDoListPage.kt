@@ -101,20 +101,7 @@ fun TodoListPage(viewModel: TodoViewModel){
                         }
                     }
 
-                    todoList.let {
-                //                        LazyColumn(
-                //                            content = {
-                //                                itemsIndexed(it){index: Int, item: toDoList ->
-                //                                    TodoItem(item = item, viewModel, onDelete = {
-                //                                        viewModel.deleteTodo(item.id)
-                //                                    })
-                //                                }
-                //                            }
-                //                        )
-
-                        DragDropList(items = it, onMove = {fromIndex, toIndex -> viewModel.moveTodo(fromIndex, toIndex)} , viewModel = viewModel)
-
-                    }
+                    DragDropList(items = todoList, onMove = { fromIndex, toIndex -> viewModel.moveTodo(fromIndex, toIndex)} , viewModel = viewModel)
 
 
                 }

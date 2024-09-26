@@ -57,6 +57,7 @@ class DragDropListState(
     var overScrollJob by mutableStateOf<Job?>(null)
 
     fun onDragStart(offset: Offset) {
+
         lazyListState.layoutInfo.visibleItemsInfo
             .firstOrNull { item ->
                 // Convert y offset to an Int and check if it is within the bounds of this item's vertical position

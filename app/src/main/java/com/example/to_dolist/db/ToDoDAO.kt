@@ -28,7 +28,7 @@ interface ToDoDAO {
     suspend fun updateData(todo: toDoList)
 
     @Query("SELECT * FROM todoList")
-    suspend fun getAllDataSync(): List<toDoList>
+    fun getAllDataSync(): List<toDoList>
 
     @Query("SELECT MAX(position) FROM todoList")
     suspend fun getMaxPosition(): Int?
