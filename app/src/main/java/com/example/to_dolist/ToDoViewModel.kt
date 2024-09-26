@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.to_dolist.db.ToDoDAO
+import com.example.to_dolist.entity.toDoList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -30,6 +32,17 @@ class TodoViewModel : ViewModel() {
     fun deleteTodo(id : Int){
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.deleteData(id)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateTodo(id: Int, newTitle: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val todo = todoDao.getDataById(id)
+            if (todo != null) {
+                val updatedTodo = todo.copy(title = newTitle, date = Date.from(Instant.now()))
+                todoDao.updateData(updatedTodo)
+            }
         }
     }
 

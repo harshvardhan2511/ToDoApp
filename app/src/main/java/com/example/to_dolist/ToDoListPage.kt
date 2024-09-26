@@ -1,30 +1,18 @@
 package com.example.to_dolist
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,8 +27,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.to_dolist.entity.toDoList
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.material3.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +44,8 @@ fun TodoListPage(viewModel: TodoViewModel){
     var inputText by remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
+
 
     Scaffold(
 
@@ -86,8 +80,13 @@ fun TodoListPage(viewModel: TodoViewModel){
                                 inputText = it
                             })
                         Button(onClick = {
-                            viewModel.addTodo(inputText)
-                            inputText = ""
+                            if(inputText.isNotEmpty()){
+                                viewModel.addTodo(inputText)
+                                inputText = ""
+                            }else{
+                                Toast.makeText(context, "Please enter some text", Toast.LENGTH_SHORT).show()
+                            }
+
                         }) {
                             Text(text = "Add")
                         }
@@ -97,7 +96,7 @@ fun TodoListPage(viewModel: TodoViewModel){
                         LazyColumn(
                             content = {
                                 itemsIndexed(it){index: Int, item: toDoList ->
-                                    TodoItem(item = item, onDelete = {
+                                    TodoItem(item = item, viewModel, onDelete = {
                                         viewModel.deleteTodo(item.id)
                                     })
                                 }
@@ -121,8 +120,14 @@ fun TodoListPage(viewModel: TodoViewModel){
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TodoItem(item : toDoList,onDelete : ()-> Unit) {
+fun TodoItem(item : toDoList, viewModel: TodoViewModel ,onDelete : ()-> Unit) {
+
+    var showDialog by remember { mutableStateOf(false) }
+    var textInput by remember { mutableStateOf(TextFieldValue("")) }
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,6 +152,14 @@ fun TodoItem(item : toDoList,onDelete : ()-> Unit) {
                 color = Color.White
             )
         }
+        IconButton(onClick = { showDialog = true }) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_edit_24),
+                contentDescription = "Edit",
+                tint = Color.White
+            )
+        }
+
         IconButton(onClick = onDelete) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_delete_24),
@@ -155,4 +168,47 @@ fun TodoItem(item : toDoList,onDelete : ()-> Unit) {
             )
         }
     }
+
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Enter Your Input") },
+            text = {
+                // Text input field inside the dialog
+                OutlinedTextField(
+                    value = textInput,
+                    onValueChange = { newValue -> textInput = newValue },
+                    label = { Text("Your input") },
+                    modifier = Modifier.fillMaxWidth() // Make the text field fill the dialog width
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        // Action on Confirm button
+                        // Handle the input data (e.g., save or process the text)
+
+                        if(textInput.text.isNotEmpty()){
+                            viewModel.updateTodo(item.id, textInput.text)
+                            showDialog = false
+                        } else {
+                            Toast.makeText(context, "Please enter some text", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text("Dismiss")
+                }
+            }
+        )
+    }
+
 }
