@@ -20,7 +20,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -89,7 +88,10 @@ fun DragDropList(
             .padding(all = 10.dp),
         state = dragDropListState.lazyListState
     ) {
-        itemsIndexed(items) { index: Int, item: toDoList ->
+        // Sort items based on position before passing to the LazyColumn
+        val sortedItems = items.sortedBy { it.position }
+
+        itemsIndexed(sortedItems) { index: Int, item: toDoList ->
             Row(
                 modifier = Modifier
                     .composed {

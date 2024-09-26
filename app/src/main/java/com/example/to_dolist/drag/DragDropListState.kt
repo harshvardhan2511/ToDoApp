@@ -23,7 +23,7 @@ fun rememberDragDropListState(
 
 class DragDropListState(
     val lazyListState: LazyListState,
-    private val onMove: (Int, Int) -> Unit
+    private var onMove: (Int, Int) -> Unit
 ){
     var draggedDistance by mutableStateOf(0f)
     var initiallyDraggedElement by mutableStateOf<LazyListItemInfo?>(null)
@@ -37,21 +37,23 @@ class DragDropListState(
         get() = currentIndexOfDraggedItem
             ?.let { draggedIndex ->
                 // Find the visible item corresponding to the dragged index
-                lazyListState.layoutInfo.visibleItemsInfo.find { it.index == draggedIndex }
+                lazyListState.getVisibleItemInfoFor(absoluteIndex = draggedIndex)
+//                lazyListState.layoutInfo.visibleItemsInfo.find { it.index == draggedIndex }
             }
-            ?.let { visibleItem ->
-                // Calculate the displacement based on the initial offset and dragged distance
-                val initialOffset = (initiallyDraggedElement?.offset ?: 0f).toFloat()
-                val currentOffset = visibleItem.offset.toFloat()
-
-                // Return the displacement as the difference between initial and current offsets
-                initialOffset + draggedDistance - currentOffset
+            ?.let { visibleItem -> (initiallyDraggedElement?.offset ?: 0f).toFloat() + draggedDistance - visibleItem.offset
+//                // Calculate the displacement based on the initial offset and dragged distance
+//                val initialOffset = (initiallyDraggedElement?.offset ?: 0f).toFloat()
+//                val currentOffset = visibleItem.offset.toFloat()
+//
+//                // Return the displacement as the difference between initial and current offsets
+//                initialOffset + draggedDistance - currentOffset
             }
 
     val currentElement: LazyListItemInfo?
         get() = currentIndexOfDraggedItem?.let { draggedIndex ->
             // Find the visible item corresponding to the dragged index
-            lazyListState.layoutInfo.visibleItemsInfo.find { it.index == draggedIndex }
+            lazyListState.getVisibleItemInfoFor(absoluteIndex = draggedIndex)
+            //lazyListState.layoutInfo.visibleItemsInfo.find { it.index == draggedIndex }
         }
 
     var overScrollJob by mutableStateOf<Job?>(null)
@@ -111,6 +113,9 @@ class DragDropListState(
             return@let when {
                 draggedDistance > 0 -> (endOffset - lazyListState.layoutInfo.viewportEndOffset).takeIf {  diff ->
                     diff > 0
+                }
+                draggedDistance > 0 -> (endOffset - lazyListState.layoutInfo.viewportEndOffset).takeIf { diff ->
+                    diff < 0
                 }
                 else -> null
             }

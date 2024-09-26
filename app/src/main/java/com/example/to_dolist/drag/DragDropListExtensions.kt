@@ -3,7 +3,7 @@ package com.example.to_dolist.drag
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 
-fun LazyListState.setVisibleItemInfoFor(absoluteIndex: Int): LazyListItemInfo? {
+fun LazyListState.getVisibleItemInfoFor(absoluteIndex: Int): LazyListItemInfo? {
     return this.layoutInfo.visibleItemsInfo.getOrNull(absoluteIndex - this.layoutInfo.visibleItemsInfo.first().index)
 }
 

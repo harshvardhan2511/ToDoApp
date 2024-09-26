@@ -108,108 +108,104 @@ fun TodoListPage(viewModel: TodoViewModel){
 
         }
     )
-
-
-
-
 }
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun TodoItem(item : toDoList, viewModel: TodoViewModel ,onDelete : ()-> Unit) {
-
-    var showDialog by remember { mutableStateOf(false) }
-    val text = item.title
-    var textInput by remember { mutableStateOf(TextFieldValue(text)) }
-    val context = LocalContext.current
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-
-    ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = SimpleDateFormat("EEE, MMM d", Locale.ENGLISH).format(item.date),
-                fontSize = 12.sp,
-                color = Color.LightGray
-            )
-            Text(
-                text = SimpleDateFormat("HH:mm:aa", Locale.ENGLISH).format(item.date),
-                fontSize = 12.sp,
-                color = Color.LightGray
-            )
-            Text(
-                text = item.title,
-                fontSize = 20.sp,
-                color = Color.White
-            )
-        }
-        IconButton(onClick = { showDialog = true }) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_edit_24),
-                contentDescription = "Edit",
-                tint = Color.White
-            )
-        }
-
-        IconButton(onClick = onDelete) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_delete_24),
-                contentDescription = "Delete",
-                tint = Color.White
-            )
-        }
-    }
-
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(text = "Edit Task") },
-            text = {
-                // Text input field inside the dialog
-                OutlinedTextField(
-                    value = textInput,
-                    onValueChange = { newValue -> textInput = newValue },
-                    placeholder = { Text("Enter Text") },
-                    label = { Text("Enter Text") },
-                    modifier = Modifier.fillMaxWidth() // Make the text field fill the dialog width
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        // Action on Confirm button
-                        // Handle the input data (e.g., save or process the text)
-
-                        if(textInput.text.isNotEmpty()){
-                            viewModel.updateTodo(item.id, textInput.text)
-                            showDialog = false
-                        } else {
-                            Toast.makeText(context, "Please enter some text", Toast.LENGTH_SHORT).show()
-                        }
-
-                    }
-                ) {
-                    Text("Confirm")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDialog = false }
-                ) {
-                    Text("Dismiss")
-                }
-            }
-        )
-    }
-
-}
+//
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Composable
+//fun TodoItem(item : toDoList, viewModel: TodoViewModel ,onDelete : ()-> Unit) {
+//
+//    var showDialog by remember { mutableStateOf(false) }
+//    val text = item.title
+//    var textInput by remember { mutableStateOf(TextFieldValue(text)) }
+//    val context = LocalContext.current
+//
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(8.dp)
+//            .clip(RoundedCornerShape(16.dp))
+//            .background(MaterialTheme.colorScheme.primary)
+//            .padding(16.dp),
+//        verticalAlignment = Alignment.CenterVertically
+//
+//    ) {
+//        Column(
+//            modifier = Modifier.weight(1f)
+//        ) {
+//            Text(
+//                text = SimpleDateFormat("EEE, MMM d", Locale.ENGLISH).format(item.date),
+//                fontSize = 12.sp,
+//                color = Color.LightGray
+//            )
+//            Text(
+//                text = SimpleDateFormat("HH:mm:aa", Locale.ENGLISH).format(item.date),
+//                fontSize = 12.sp,
+//                color = Color.LightGray
+//            )
+//            Text(
+//                text = item.title,
+//                fontSize = 20.sp,
+//                color = Color.White
+//            )
+//        }
+//        IconButton(onClick = { showDialog = true }) {
+//            Icon(
+//                painter = painterResource(id = R.drawable.baseline_edit_24),
+//                contentDescription = "Edit",
+//                tint = Color.White
+//            )
+//        }
+//
+//        IconButton(onClick = onDelete) {
+//            Icon(
+//                painter = painterResource(id = R.drawable.baseline_delete_24),
+//                contentDescription = "Delete",
+//                tint = Color.White
+//            )
+//        }
+//    }
+//
+//
+//    if (showDialog) {
+//        AlertDialog(
+//            onDismissRequest = { showDialog = false },
+//            title = { Text(text = "Edit Task") },
+//            text = {
+//                // Text input field inside the dialog
+//                OutlinedTextField(
+//                    value = textInput,
+//                    onValueChange = { newValue -> textInput = newValue },
+//                    placeholder = { Text("Enter Text") },
+//                    label = { Text("Enter Text") },
+//                    modifier = Modifier.fillMaxWidth() // Make the text field fill the dialog width
+//                )
+//            },
+//            confirmButton = {
+//                TextButton(
+//                    onClick = {
+//                        // Action on Confirm button
+//                        // Handle the input data (e.g., save or process the text)
+//
+//                        if(textInput.text.isNotEmpty()){
+//                            viewModel.updateTodo(item.id, textInput.text)
+//                            showDialog = false
+//                        } else {
+//                            Toast.makeText(context, "Please enter some text", Toast.LENGTH_SHORT).show()
+//                        }
+//
+//                    }
+//                ) {
+//                    Text("Confirm")
+//                }
+//            },
+//            dismissButton = {
+//                TextButton(
+//                    onClick = { showDialog = false }
+//                ) {
+//                    Text("Dismiss")
+//                }
+//            }
+//        )
+//    }
+//
+//}
